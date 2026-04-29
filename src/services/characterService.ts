@@ -83,26 +83,210 @@ function extractStrokeInfo(char: string, hwData: any): Character | null {
   }
 }
 
-// 根据笔画路径猜测笔画名称
+// 解析 SVG path 提取所有坐标点和命令
+function parsePathData(path: string): { points: Array<{x: number, y: number}>, commands: string[] } {
+  const points: Array<{x: number, y: number}> = []
+  const commands: string[] = []
+
+  // 提取所有命令字母
+  const cmdMatches = path.match(/[MmLlHhVvCcSsQqTtAaZz]/g)
+  if (cmdMatches) commands.push(...cmdMatches)
+
+  // 匹配所有数字（包括小数）
+  const numbers = path.match(/-?\d+(?:\.\d+)?/g)
+  if (!numbers) return { points, commands }
+
+  for (let i = 0; i < numbers.length; i += 2) {
+    const x = parseFloat(numbers[i])
+    const y = parseFloat(numbers[i + 1])
+    if (!isNaN(x) && !isNaN(y)) {
+      points.push({ x, y })
+    }
+  }
+  return { points, commands }
+}
+
+// 计算向量角度（弧度）
+function getAngle(x: number, y: number): number {
+  return Math.atan2(y, x)
+}
+
+// 判断是否为钩：末端有急剧回弯
+function hasHook(points: Array<{x: number, y: number}>): boolean {
+  if (points.length < 4) return false
+
+  const n = points.length
+  // 取末端的几点来判断走向变化
+  const lastSegmentX = points[n-1].x - points[n-2].x
+  const lastSegmentY = points[n-1].y - points[n-2].y
+
+  const prevSegmentX2 = points[n-3].x - points[n-4].x
+  const prevSegmentY2 = points[n-3].y - points[n-4].y
+
+  // 计算角度变化
+  const angle1 = getAngle(prevSegmentX2, prevSegmentY2)
+  const angle2 = getAngle(lastSegmentX, lastSegmentY)
+  const angleDiff = Math.abs(angle2 - angle1)
+
+  // 如果有明显的方向回弯（钩的特征）
+  if (angleDiff > Math.PI / 3 && angleDiff < Math.PI * 1.5) {
+    return true
+  }
+
+  return false
+}
+
+// 改进的笔画名称识别算法
 function guessStrokeName(path: string, index: number): string {
   if (!path) return `第${index + 1}笔`
 
-  const start = path.charAt(0)
+  const { points } = parsePathData(path)
+  if (points.length < 2) return `第${index + 1}笔`
 
-  // 简单启发式判断常见笔画
-  if (path.includes('c')) return '捺'
-  if (path.includes('q')) return '撇'
-  if (start === 'M') return path.length > 10 ? '横折' : '横'
-  if (start === 'L') return '竖'
-  if (path.includes('z')) return '横折钩'
+  const start = points[0]
+  const end = points[points.length - 1]
 
-  return `第${index + 1}笔`
+  // 计算位移
+  const dx = end.x - start.x
+  const dy = end.y - start.y
+  const absDx = Math.abs(dx)
+  const absDy = Math.abs(dy)
+
+  // 判断复杂度
+  const hasCurve = /[CcQq]/.test(path)
+  const hasArc = /[Aa]/.test(path)
+
+  // 计算主体走向（前80%部分）
+  const bodyEndIndex = Math.floor(points.length * 0.8)
+  const bodyDx = points[bodyEndIndex].x - start.x
+  const bodyDy = points[bodyEndIndex].y - start.y
+  const bodyAbsDx = Math.abs(bodyDx)
+  const bodyAbsDy = Math.abs(bodyDy)
+
+  // 判断是否有钩
+  const isHook = hasHook(points)
+
+  // 判断是否有明显转折
+  let directionChanges = 0
+  if (points.length >= 3) {
+    let prevAngle = getAngle(points[1].x - points[0].x, points[1].y - points[0].y)
+    for (let i = 2; i < points.length - 1; i++) {
+      const angle = getAngle(points[i].x - points[i-1].x, points[i].y - points[i-1].y)
+      const angleDiff = Math.abs(normalizeAngle(angle - prevAngle))
+      if (angleDiff > Math.PI / 4) {
+        directionChanges++
+      }
+      prevAngle = angle
+    }
+  }
+
+  // 辅助函数：角度归一化到 -PI ~ PI
+  function normalizeAngle(angle: number): number {
+    while (angle > Math.PI) angle -= 2 * Math.PI
+    while (angle < -Math.PI) angle += 2 * Math.PI
+    return angle
+  }
+
+  // ========== 复合笔画判断 ==========
+  if (directionChanges >= 1 || hasCurve || hasArc) {
+    // 比例判断
+    const isHorizontalBody = bodyAbsDx > bodyAbsDy
+    const isVerticalBody = bodyAbsDy > bodyAbsDx
+
+    // 横折/横折钩系列：主体是横 + 转折
+    if (isHorizontalBody) {
+      // 横钩
+      if (isHook && dy < bodyAbsDx * 0.3) return '横钩'
+      // 横撇
+      if (dx < 0 || (bodyDx > 0 && dx < bodyDx * 0.5)) return '横撇'
+      // 横折折撇
+      if (directionChanges >= 2) return '横折折撇'
+      // 横折钩
+      if (isHook || hasCurve) return '横折钩'
+      return '横折'
+    }
+
+    // 竖钩/竖提系列：主体是竖 + 转折
+    if (isVerticalBody) {
+      // 判断末端方向
+      const endDx = points[points.length-1].x - points[points.length-2].x
+      const endDy = points[points.length-1].y - points[points.length-2].y
+
+      // 末端向上（提）
+      if (endDy < -Math.abs(endDx)) return '竖提'
+      // 末端向左或向右（钩）
+      if (Math.abs(endDx) > Math.abs(endDy) * 0.5) return '竖钩'
+      // 有曲线通常是竖弯钩
+      if (hasCurve || hasArc) {
+        if (dx > bodyAbsDy * 0.3) return '竖弯钩'
+        return '竖弯'
+      }
+      return '竖折'
+    }
+
+    // 撇钩系列
+    if (bodyDx < 0 && bodyDy > 0) {
+      if (isHook) return '斜钩'
+    }
+
+    // 撇点
+    if (dx < 0 && dy < 0 && hasCurve) return '撇点'
+
+    return '横折'
+  }
+
+  // ========== 简单笔画判断 ==========
+
+  // 1. 竖：主要是垂直向下
+  if (bodyAbsDy > bodyAbsDx * 2 && Math.abs(dx) < bodyAbsDy * 0.3) {
+    // 检查末端是否有小钩
+    if (points.length >= 3) {
+      const endDx = points[points.length-1].x - points[points.length-2].x
+      if (Math.abs(endDx) > 30) return '竖钩'
+    }
+    return '竖'
+  }
+
+  // 2. 横：主要是水平
+  if (bodyAbsDx > bodyAbsDy * 3 && Math.abs(dy) < bodyAbsDx * 0.2) {
+    return '横'
+  }
+
+  // 3. 提：从左下到右上
+  if (dx > 0 && dy < -absDx * 0.3) {
+    return '提'
+  }
+
+  // 4. 撇：从右上到左下
+  if (dx < -absDy * 0.2 && dy > 0) {
+    return '撇'
+  }
+
+  // 5. 捺：从左上到右下，有弧度
+  if (dx > absDy * 0.2 && dy > 0) {
+    if (hasCurve || points.length > 3) return '捺'
+    return '点'
+  }
+
+  // 6. 点：短小，右下方向
+  const totalLength = Math.sqrt(absDx * absDx + absDy * absDy)
+  if (dx > 0 && dy > 0 && totalLength < 300) {
+    return '点'
+  }
+
+  // 默认根据主要方向判断
+  if (absDx > absDy) {
+    return dx > 0 ? '横' : '提'
+  } else {
+    return dy > 0 ? '竖' : '提'
+  }
 }
 
 // 获取单个汉字数据
 export async function getCharacterData(char: string): Promise<Character | null> {
   // 1. 检查缓存
   if (characterCache[char]) {
+    console.log(`[Cache] 命中: ${char}`, characterCache[char].strokeOrder?.map((s: any) => s.name))
     return characterCache[char]
   }
 
@@ -112,16 +296,26 @@ export async function getCharacterData(char: string): Promise<Character | null> 
     const data = await response.json()
 
     if (data[char]) {
+      // 确保每个笔画都有 name 字段
+      const strokeOrder = data[char].strokeOrder?.map((stroke: any, idx: number) => ({
+        order: stroke.order || idx + 1,
+        name: stroke.name || '',  // 保留原始 name
+        direction: stroke.direction || '',
+        path: stroke.path || '',
+        tips: stroke.tips || '',
+      }))
+
       const character: Character = {
         char,
         pinyin: data[char].pinyin,
         strokes: data[char].strokes,
         radical: data[char].radical,
-        strokeOrder: data[char].strokeOrder,
+        strokeOrder,
       }
 
       // 存入缓存
       characterCache[char] = character
+      console.log(`[Local JSON] 加载: ${char}`, strokeOrder.map((s: any) => s.name))
       return character
     }
   } catch (err) {
