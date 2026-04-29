@@ -1,0 +1,418 @@
+{
+  "天": {
+    "char": "天",
+    "pinyin": ["tiān"],
+    "strokes": 4,
+    "radical": "大",
+    "strokeOrder": [
+      {
+        "index": 1,
+        "path": "M 280 280 L 760 280",
+        "direction": "一",
+        "name": "横"
+      },
+      {
+        "index": 2,
+        "path": "M 180 500 L 860 500",
+        "direction": "一",
+        "name": "横"
+      },
+      {
+        "index": 3,
+        "path": "M 450 520 L 220 820",
+        "direction": "丿",
+        "name": "撇"
+      },
+      {
+        "index": 4,
+        "path": "M 580 520 L 820 860",
+        "direction": "㇏",
+        "name": "捺"
+      }
+    ]
+  },
+  "地": {
+    "char": "地",
+    "pinyin": ["dì", "de"],
+    "strokes": 6,
+    "radical": "土",
+    "strokeOrder": [
+      {
+        "index": 1,
+        "path": "M 117 483 L 326 483",
+        "direction": "一",
+        "name": "横"
+      },
+      {
+        "index": 2,
+        "path": "M 221 270 L 221 741",
+        "direction": "丨",
+        "name": "竖"
+      },
+      {
+        "index": 3,
+        "path": "M 84 772 L 358 741",
+        "direction": "㇀",
+        "name": "提"
+      },
+      {
+        "index": 4,
+        "path": "M 483 387 Q 620 358 797 350 L 797 350 Q 797 391 809 416 L 483 450 Q 468 416 483 387",
+        "direction": "𠃍",
+        "name": "横折钩"
+      },
+      {
+        "index": 5,
+        "path": "M 639 270 L 639 750",
+        "direction": "丨",
+        "name": "竖"
+      },
+      {
+        "index": 6,
+        "path": "M 422 813 Q 639 788 924 741",
+        "direction": "乚",
+        "name": "竖弯钩"
+      }
+    ]
+  },
+  "人": {
+    "char": "人",
+    "pinyin": ["rén"],
+    "strokes": 2,
+    "radical": "人",
+    "strokeOrder": [
+      {
+        "index": 1,
+        "path": "M 366 245 Q 338 395 186 762",
+        "direction": "丿",
+        "name": "撇"
+      },
+      {
+        "index": 2,
+        "path": "M 639 245 Q 690 441 834 759",
+        "direction": "㇏",
+        "name": "捺"
+      }
+    ]
+  },
+  "你": {
+    "char": "你",
+    "pinyin": ["nǐ"],
+    "strokes": 7,
+    "radical": "亻",
+    "strokeOrder": [
+      {
+        "index": 1,
+        "path": "M 237 208 L 237 809",
+        "direction": "丨",
+        "name": "竖"
+      },
+      {
+        "index": 2,
+        "path": "M 113 266 Q 245 233 325 266",
+        "direction": "丿",
+        "name": "撇"
+      },
+      {
+        "index": 3,
+        "path": "M 497 162 Q 497 162 893 162",
+        "direction": "丿",
+        "name": "撇"
+      },
+      {
+        "index": 4,
+        "path": "M 693 191 L 693 913",
+        "direction": "亅",
+        "name": "竖钩"
+      },
+      {
+        "index": 5,
+        "path": "M 693 491 L 909 491",
+        "direction": "一",
+        "name": "横"
+      },
+      {
+        "index": 6,
+        "path": "M 522 333 Q 489 516 416 720",
+        "direction": "丿",
+        "name": "撇"
+      },
+      {
+        "index": 7,
+        "path": "M 826 312 L 875 549",
+        "direction": "丶",
+        "name": "点"
+      }
+    ]
+  },
+  "我": {
+    "char": "我",
+    "pinyin": ["wǒ"],
+    "strokes": 7,
+    "radical": "戈",
+    "strokeOrder": [
+      {
+        "index": 1,
+        "path": "M 325 153 L 325 846",
+        "direction": "丿",
+        "name": "撇"
+      },
+      {
+        "index": 2,
+        "path": "M 489 195 L 489 913",
+        "direction": "一",
+        "name": "横"
+      },
+      {
+        "index": 3,
+        "path": "M 186 512 L 551 475 L 551 550 L 186 583",
+        "direction": "㇀",
+        "name": "提"
+      },
+      {
+        "index": 4,
+        "path": "M 641 312 L 641 854",
+        "direction": "亅",
+        "name": "竖钩"
+      },
+      {
+        "index": 5,
+        "path": "M 618 333 Q 817 266 934 242",
+        "direction": "㇂",
+        "name": "斜钩"
+      },
+      {
+        "index": 6,
+        "path": "M 739 158 L 739 525",
+        "direction": "丿",
+        "name": "撇"
+      },
+      {
+        "index": 7,
+        "path": "M 893 500 Q 851 650 797 771",
+        "direction": "丶",
+        "name": "点"
+      }
+    ]
+  },
+  "他": {
+    "char": "他",
+    "pinyin": ["tā"],
+    "strokes": 5,
+    "radical": "亻",
+    "strokeOrder": [
+      {
+        "index": 1,
+        "path": "M 195 333 L 195 855",
+        "direction": "丨",
+        "name": "竖"
+      },
+      {
+        "index": 2,
+        "path": "M 92 366 Q 208 325 276 366",
+        "direction": "丿",
+        "name": "撇"
+      },
+      {
+        "index": 3,
+        "path": "M 483 316 L 483 875",
+        "direction": "丨",
+        "name": "竖"
+      },
+      {
+        "index": 4,
+        "path": "M 477 312 Q 639 270 850 245 L 850 245 Q 862 270 868 300 L 422 416 Q 404 358 477 312",
+        "direction": "𠃌",
+        "name": "横折钩"
+      },
+      {
+        "index": 5,
+        "path": "M 391 775 Q 687 733 951 712",
+        "direction": "乚",
+        "name": "竖弯钩"
+      }
+    ]
+  },
+  "一": {
+    "char": "一",
+    "pinyin": ["yī"],
+    "strokes": 1,
+    "radical": "一",
+    "strokeOrder": [
+      {
+        "index": 1,
+        "path": "M 92 512 L 934 512",
+        "direction": "一",
+        "name": "横"
+      }
+    ]
+  },
+  "二": {
+    "char": "二",
+    "pinyin": ["èr"],
+    "strokes": 2,
+    "radical": "二",
+    "strokeOrder": [
+      {
+        "index": 1,
+        "path": "M 162 329 L 842 329",
+        "direction": "一",
+        "name": "横"
+      },
+      {
+        "index": 2,
+        "path": "M 139 712 L 865 712",
+        "direction": "一",
+        "name": "横"
+      }
+    ]
+  },
+  "三": {
+    "char": "三",
+    "pinyin": ["sān"],
+    "strokes": 3,
+    "radical": "一",
+    "strokeOrder": [
+      {
+        "index": 1,
+        "path": "M 173 253 L 831 253",
+        "direction": "一",
+        "name": "横"
+      },
+      {
+        "index": 2,
+        "path": "M 139 512 L 865 512",
+        "direction": "一",
+        "name": "横"
+      },
+      {
+        "index": 3,
+        "path": "M 115 780 L 889 780",
+        "direction": "一",
+        "name": "横"
+      }
+    ]
+  },
+  "四": {
+    "char": "四",
+    "pinyin": ["sì"],
+    "strokes": 5,
+    "radical": "囗",
+    "strokeOrder": [
+      {
+        "index": 1,
+        "path": "M 253 183 L 253 858",
+        "direction": "丨",
+        "name": "竖"
+      },
+      {
+        "index": 2,
+        "path": "M 253 183 Q 518 99 789 183 L 748 251 Q 501 166 253 251 L 253 183",
+        "direction": "𠃍",
+        "name": "横折"
+      },
+      {
+        "index": 3,
+        "path": "M 789 183 L 789 858",
+        "direction": "丨",
+        "name": "竖"
+      },
+      {
+        "index": 4,
+        "path": "M 309 520 Q 520 466 699 512",
+        "direction": "丿",
+        "name": "撇"
+      },
+      {
+        "index": 5,
+        "path": "M 416 613 Q 571 566 754 588 L 754 640 L 416 687 Q 376 640 416 613",
+        "direction": "㇄",
+        "name": "竖弯"
+      }
+    ]
+  },
+  "五": {
+    "char": "五",
+    "pinyin": ["wǔ"],
+    "strokes": 4,
+    "radical": "二",
+    "strokeOrder": [
+      {
+        "index": 1,
+        "path": "M 150 312 Q 512 214 874 312 L 847 379 Q 501 275 177 379 L 150 312",
+        "direction": "一",
+        "name": "横"
+      },
+      {
+        "index": 2,
+        "path": "M 466 287 L 466 797",
+        "direction": "丨",
+        "name": "竖"
+      },
+      {
+        "index": 3,
+        "path": "M 117 550 L 779 504 L 808 583 L 117 633 L 117 550",
+        "direction": "𠃍",
+        "name": "横折"
+      },
+      {
+        "index": 4,
+        "path": "M 186 788 Q 512 727 824 780",
+        "direction": "一",
+        "name": "横"
+      }
+    ]
+  },
+  "上": {
+    "char": "上",
+    "pinyin": ["shàng", "shāng"],
+    "strokes": 3,
+    "radical": "一",
+    "strokeOrder": [
+      {
+        "index": 1,
+        "path": "M 186 291 Q 518 224 850 291 L 821 362 Q 512 285 215 362 L 186 291",
+        "direction": "丨",
+        "name": "竖"
+      },
+      {
+        "index": 2,
+        "path": "M 105 512 L 525 512",
+        "direction": "一",
+        "name": "横"
+      },
+      {
+        "index": 3,
+        "path": "M 92 807 L 937 794",
+        "direction": "一",
+        "name": "横"
+      }
+    ]
+  },
+  "下": {
+    "char": "下",
+    "pinyin": ["xià"],
+    "strokes": 3,
+    "radical": "一",
+    "strokeOrder": [
+      {
+        "index": 1,
+        "path": "M 115 229 Q 518 153 920 229 L 891 300 Q 518 224 144 300 L 115 229",
+        "direction": "一",
+        "name": "横"
+      },
+      {
+        "index": 2,
+        "path": "M 512 208 L 512 858",
+        "direction": "丨",
+        "name": "竖"
+      },
+      {
+        "index": 3,
+        "path": "M 312 562 Q 430 600 548 541 L 525 608 Q 430 654 295 616 L 312 562",
+        "direction": "丶",
+        "name": "点"
+      }
+    ]
+  }
+}

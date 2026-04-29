@@ -1,0 +1,27 @@
+{
+  "name": "宝宝学写字",
+  "short_name": "学写字",
+  "description": "儿童汉字学习应用，展示笔顺动画和书写要点",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FDF5E6",
+  "theme_color": "#F4A460",
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512x512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "kids"],
+  "lang": "zh-CN",
+  "dir": "ltr"
+}
