@@ -3,6 +3,11 @@ import HanziWriter from 'hanzi-writer'
 import { Play, Volume2 } from 'lucide-react'
 import type { Character } from '../types'
 
+// 多音字TTS修正映射：key是原文字，value是用于播报的文本
+const TTS_PRONUNCIATION_FIX: Record<string, string> = {
+  '竖': '述',  // 述料的述，确保读 shù 第四声
+}
+
 // 笔画名称映射 - Unicode 笔画符号到中文名称
 const strokeNames: Record<string, string> = {
   // 基本笔画
@@ -93,19 +98,22 @@ export const StrokeAnimator: React.FC<StrokeAnimatorProps> = ({
   const speakStroke = useCallback((strokeName: string) => {
     if (!window.speechSynthesis) return
     window.speechSynthesis.cancel()
-    const utterance = new SpeechSynthesisUtterance(strokeName)
+    // 应用多音字修正
+    const correctedName = TTS_PRONUNCIATION_FIX[strokeName] || strokeName
+    const utterance = new SpeechSynthesisUtterance(correctedName)
     utterance.lang = 'zh-CN'
     utterance.rate = 0.9
     window.speechSynthesis.speak(utterance)
   }, [])
 
-  // 获取当前笔画名称
+  // 获取当前笔画名称 - 优先用查表法
   const getCurrentStrokeName = useCallback((index: number): string => {
     if (!characterData?.strokeOrder || index < 0 || index >= characterData.strokeOrder.length) {
       return ''
     }
     const stroke = characterData.strokeOrder[index]
-    return stroke.name || strokeNames[stroke.direction] || ''
+    // 优先用查表法，其次用 JSON 的 name，最后用默认
+    return strokeNames[stroke.direction] || stroke.name || `第${index + 1}笔`
   }, [characterData])
 
   // 初始化 hanzi-writer
@@ -113,6 +121,12 @@ export const StrokeAnimator: React.FC<StrokeAnimatorProps> = ({
     if (!containerRef.current) return
 
     containerRef.current.innerHTML = ''
+
+    // 获取容器实际尺寸
+    const containerWidth = containerRef.current.clientWidth
+    const containerHeight = containerRef.current.clientHeight
+    const center = containerWidth / 2
+    const padding = 10
 
     // 创建米字格背景
     const gridDiv = document.createElement('div')
@@ -126,12 +140,12 @@ export const StrokeAnimator: React.FC<StrokeAnimatorProps> = ({
       pointer-events: none;
     `
     gridDiv.innerHTML = `
-      <svg width="100%" height="100%" viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg">
-        <rect x="10" y="10" width="260" height="260" fill="none" stroke="#D0C0B0" stroke-width="2"/>
-        <line x1="140" y1="10" x2="140" y2="270" stroke="#C8B8A8" stroke-width="1.5" stroke-dasharray="6,6" opacity="0.7"/>
-        <line x1="10" y1="140" x2="270" y2="140" stroke="#C8B8A8" stroke-width="1.5" stroke-dasharray="6,6" opacity="0.7"/>
-        <line x1="10" y1="10" x2="270" y2="270" stroke="#C8B8A8" stroke-width="1.5" stroke-dasharray="6,6" opacity="0.7"/>
-        <line x1="270" y1="10" x2="10" y2="270" stroke="#C8B8A8" stroke-width="1.5" stroke-dasharray="6,6" opacity="0.7"/>
+      <svg width="100%" height="100%" viewBox="0 0 ${containerWidth} ${containerHeight}" xmlns="http://www.w3.org/2000/svg">
+        <rect x="${padding}" y="${padding}" width="${containerWidth - padding * 2}" height="${containerHeight - padding * 2}" fill="none" stroke="#D0C0B0" stroke-width="2"/>
+        <line x1="${center}" y1="${padding}" x2="${center}" y2="${containerHeight - padding}" stroke="#C8B8A8" stroke-width="1.5" stroke-dasharray="6,6" opacity="0.7"/>
+        <line x1="${padding}" y1="${center}" x2="${containerWidth - padding}" y2="${center}" stroke="#C8B8A8" stroke-width="1.5" stroke-dasharray="6,6" opacity="0.7"/>
+        <line x1="${padding}" y1="${padding}" x2="${containerWidth - padding}" y2="${containerHeight - padding}" stroke="#C8B8A8" stroke-width="1.5" stroke-dasharray="6,6" opacity="0.7"/>
+        <line x1="${containerWidth - padding}" y1="${padding}" x2="${padding}" y2="${containerHeight - padding}" stroke="#C8B8A8" stroke-width="1.5" stroke-dasharray="6,6" opacity="0.7"/>
       </svg>
     `
 
@@ -149,8 +163,8 @@ export const StrokeAnimator: React.FC<StrokeAnimatorProps> = ({
     containerRef.current.appendChild(targetDiv)
 
     const writer = HanziWriter.create(targetDiv, character, {
-      width: 280,
-      height: 280,
+      width: containerWidth,
+      height: containerHeight,
       padding: 10,
       strokeColor: '#333333',
       radicalColor: '#333333',

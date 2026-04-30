@@ -5,11 +5,11 @@
   "semester": 1,
   "version": "部编版",
   "publisher": "人民教育出版社",
-  "totalLessons": 14,
+  "totalLessons": 20,
   "units": [
     {
       "id": "unit-1",
-      "name": "识字",
+      "name": "识字一",
       "lessons": [
         {
           "id": "lesson-1-1",
@@ -23,14 +23,144 @@
           "order": 2,
           "title": "金木水火土",
           "writingChars": [],
-          "readingChars": ["一", "二", "三", "四", "五", "上", "下"]
+          "readingChars": ["金", "木", "水", "火", "土"]
         },
         {
           "id": "lesson-1-3",
           "order": 3,
           "title": "口耳目",
           "writingChars": [],
-          "readingChars": ["口", "耳", "目", "手", "足", "站", "坐"]
+          "readingChars": ["口", "耳", "目", "手", "足"]
+        },
+        {
+          "id": "lesson-1-4",
+          "order": 4,
+          "title": "日月水火",
+          "writingChars": [],
+          "readingChars": ["日", "月", "山", "石", "田", "禾"]
+        },
+        {
+          "id": "lesson-1-5",
+          "order": 5,
+          "title": "对韵歌",
+          "writingChars": [],
+          "readingChars": ["云", "雨", "风", "花", "鸟", "虫", "六", "七", "八", "九", "十"]
+        }
+      ]
+    },
+    {
+      "id": "unit-2",
+      "name": "课文",
+      "lessons": [
+        {
+          "id": "lesson-2-1",
+          "order": 7,
+          "title": "秋天",
+          "writingChars": [],
+          "readingChars": ["秋", "气", "了", "树", "叶", "片", "大", "飞", "会", "个"]
+        },
+        {
+          "id": "lesson-2-2",
+          "order": 8,
+          "title": "小小的船",
+          "writingChars": [],
+          "readingChars": ["的", "船", "两", "头", "在", "里", "看", "见", "闪", "星"]
+        },
+        {
+          "id": "lesson-2-3",
+          "order": 9,
+          "title": "江南",
+          "writingChars": [],
+          "readingChars": ["江", "南", "可", "采", "莲", "鱼", "东", "西", "北"]
+        },
+        {
+          "id": "lesson-2-4",
+          "order": 10,
+          "title": "四季",
+          "writingChars": [],
+          "readingChars": ["尖", "说", "春", "夏", "弯", "青", "蛙", "冬", "男", "女"]
+        }
+      ]
+    },
+    {
+      "id": "unit-3",
+      "name": "识字二",
+      "lessons": [
+        {
+          "id": "lesson-3-1",
+          "order": 11,
+          "title": "画",
+          "writingChars": [],
+          "readingChars": ["画", "远", "近", "色", "听", "无", "声", "去", "还", "有"]
+        },
+        {
+          "id": "lesson-3-2",
+          "order": 12,
+          "title": "大小多少",
+          "writingChars": [],
+          "readingChars": ["多", "少", "黄", "牛", "只", "猫", "边", "鸭", "苹", "果"]
+        },
+        {
+          "id": "lesson-3-3",
+          "order": 13,
+          "title": "小书包",
+          "writingChars": [],
+          "readingChars": ["包", "尺", "作", "业", "本", "笔", "刀", "课", "早", "校"]
+        },
+        {
+          "id": "lesson-3-4",
+          "order": 14,
+          "title": "日月明",
+          "writingChars": [],
+          "readingChars": ["明", "力", "尘", "从", "众", "双", "木", "林", "森", "条", "心"]
+        },
+        {
+          "id": "lesson-3-5",
+          "order": 15,
+          "title": "升国旗",
+          "writingChars": [],
+          "readingChars": ["升", "国", "旗", "中", "红", "歌", "起", "么", "美", "丽", "立"]
+        }
+      ]
+    },
+    {
+      "id": "unit-4",
+      "name": "课文二",
+      "lessons": [
+        {
+          "id": "lesson-4-1",
+          "order": 16,
+          "title": "影子",
+          "writingChars": [],
+          "readingChars": ["影", "前", "后", "黑", "狗", "左", "右", "它", "好", "朋", "友"]
+        },
+        {
+          "id": "lesson-4-2",
+          "order": 17,
+          "title": "比尾巴",
+          "writingChars": [],
+          "readingChars": ["比", "尾", "巴", "谁", "长", "短", "把", "伞", "兔", "最", "公"]
+        },
+        {
+          "id": "lesson-4-3",
+          "order": 18,
+          "title": "青蛙写诗",
+          "writingChars": [],
+          "readingChars": ["写", "诗", "点", "要", "过", "给", "当", "串", "们", "以", "成"]
+        },
+        {
+          "id": "lesson-4-4",
+          "order": 19,
+          "title": "雨点儿",
+          "writingChars": [],
+          "readingChars": ["数", "彩", "半", "空", "问", "到", "方", "没", "更", "绿", "出", "长"]
+        },
+        {
+          "id": "lesson-4-5",
+          "order": 20,
+          "title": "明天要远足",
+          "writingChars": [],
+          "readingChars": ["才", "明", "同", "学", "睡", "那", "海", "真", "老", "师", "吗", "什", "亮"]
         }
       ]
     }

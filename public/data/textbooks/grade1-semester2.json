@@ -1,0 +1,208 @@
+{
+  "id": "grade1-sem2",
+  "name": "一年级下册",
+  "grade": 1,
+  "semester": 2,
+  "version": "部编版",
+  "publisher": "人民教育出版社",
+  "totalLessons": 23,
+  "units": [
+    {
+      "id": "unit-1",
+      "name": "识字一",
+      "lessons": [
+        {
+          "id": "lesson-1-1",
+          "order": 1,
+          "title": "春夏秋冬",
+          "writingChars": [],
+          "readingChars": ["春", "夏", "秋", "冬", "风", "雪", "花", "飞", "入"]
+        },
+        {
+          "id": "lesson-1-2",
+          "order": 2,
+          "title": "姓氏歌",
+          "writingChars": [],
+          "readingChars": ["姓", "什", "么", "双", "国", "王", "方"]
+        },
+        {
+          "id": "lesson-1-3",
+          "order": 3,
+          "title": "小青蛙",
+          "writingChars": [],
+          "readingChars": ["青", "清", "气", "晴", "情", "请", "生"]
+        },
+        {
+          "id": "lesson-1-4",
+          "order": 4,
+          "title": "猜字谜",
+          "writingChars": [],
+          "readingChars": ["字", "左", "右", "红", "时", "动", "万"]
+        }
+      ]
+    },
+    {
+      "id": "unit-2",
+      "name": "课文一",
+      "lessons": [
+        {
+          "id": "lesson-2-1",
+          "order": 5,
+          "title": "吃水不忘挖井人",
+          "writingChars": [],
+          "readingChars": ["吃", "叫", "主", "江", "住", "没", "以"]
+        },
+        {
+          "id": "lesson-2-2",
+          "order": 6,
+          "title": "我多想去看看",
+          "writingChars": [],
+          "readingChars": ["会", "走", "北", "京", "门", "广"]
+        },
+        {
+          "id": "lesson-2-3",
+          "order": 7,
+          "title": "一个接一个",
+          "writingChars": [],
+          "readingChars": ["过", "各", "种", "样", "伙", "伴", "这"]
+        },
+        {
+          "id": "lesson-2-4",
+          "order": 8,
+          "title": "四个太阳",
+          "writingChars": [],
+          "readingChars": ["太", "阳", "道", "送", "忙", "尝", "香", "甜", "温", "暖", "该", "颜", "因"]
+        }
+      ]
+    },
+    {
+      "id": "unit-3",
+      "name": "课文二",
+      "lessons": [
+        {
+          "id": "lesson-3-1",
+          "order": 9,
+          "title": "小公鸡和小鸭子",
+          "writingChars": [],
+          "readingChars": ["他", "河", "说", "也", "地", "听", "哥", "捉", "急", "直", "行", "死", "信", "跟", "忽", "喊", "身"]
+        },
+        {
+          "id": "lesson-3-2",
+          "order": 10,
+          "title": "树和喜鹊",
+          "writingChars": [],
+          "readingChars": ["单", "居", "招", "呼", "快", "乐"]
+        },
+        {
+          "id": "lesson-3-3",
+          "order": 11,
+          "title": "怎么都快乐",
+          "writingChars": [],
+          "readingChars": ["玩", "很", "当", "音", "讲", "行", "许"]
+        }
+      ]
+    },
+    {
+      "id": "unit-4",
+      "name": "课文三",
+      "lessons": [
+        {
+          "id": "lesson-4-1",
+          "order": 12,
+          "title": "静夜思",
+          "writingChars": [],
+          "readingChars": ["思", "床", "前", "光", "低", "故", "乡"]
+        },
+        {
+          "id": "lesson-4-2",
+          "order": 13,
+          "title": "夜色",
+          "writingChars": [],
+          "readingChars": ["胆", "敢", "往", "外", "勇", "窗", "乱", "偏", "散", "原", "像", "微"]
+        },
+        {
+          "id": "lesson-4-3",
+          "order": 14,
+          "title": "端午粽",
+          "writingChars": [],
+          "readingChars": ["端", "粽", "节", "总", "米", "间", "分", "豆", "肉", "带", "知", "据", "念"]
+        },
+        {
+          "id": "lesson-4-4",
+          "order": 15,
+          "title": "彩虹",
+          "writingChars": [],
+          "readingChars": ["虹", "座", "浇", "提", "洒", "挑", "兴", "拿", "镜", "照"]
+        }
+      ]
+    },
+    {
+      "id": "unit-5",
+      "name": "识字二",
+      "lessons": [
+        {
+          "id": "lesson-5-1",
+          "order": 16,
+          "title": "动物儿歌",
+          "writingChars": [],
+          "readingChars": ["间", "迷", "造", "运", "池", "欢", "网"]
+        },
+        {
+          "id": "lesson-5-2",
+          "order": 17,
+          "title": "古对今",
+          "writingChars": [],
+          "readingChars": ["古", "凉", "细", "夕", "李", "语", "香"]
+        },
+        {
+          "id": "lesson-5-3",
+          "order": 18,
+          "title": "操场上",
+          "writingChars": [],
+          "readingChars": ["操", "场", "拔", "拍", "跑", "踢", "铃", "热", "闹", "锻", "炼", "体"]
+        },
+        {
+          "id": "lesson-5-4",
+          "order": 19,
+          "title": "人之初",
+          "writingChars": [],
+          "readingChars": ["之", "初", "性", "善", "习", "教", "迁", "贵", "专", "幼", "玉", "器", "义"]
+        }
+      ]
+    },
+    {
+      "id": "unit-6",
+      "name": "课文四",
+      "lessons": [
+        {
+          "id": "lesson-6-1",
+          "order": 20,
+          "title": "古诗二首",
+          "writingChars": [],
+          "readingChars": ["首", "池", "爱", "尖", "角", "亮", "机", "台", "放", "鱼", "朵", "美"]
+        },
+        {
+          "id": "lesson-6-2",
+          "order": 21,
+          "title": "荷叶圆圆",
+          "writingChars": [],
+          "readingChars": ["珠", "摇", "躺", "晶", "停", "机", "展", "透", "翅", "膀", "唱", "朵"]
+        },
+        {
+          "id": "lesson-6-3",
+          "order": 22,
+          "title": "要下雨了",
+          "writingChars": [],
+          "readingChars": ["腰", "坡", "沉", "伸", "潮", "湿", "呢", "空", "闷", "消", "息", "搬", "响"]
+        },
+        {
+          "id": "lesson-6-4",
+          "order": 23,
+          "title": "文具的家",
+          "writingChars": [],
+          "readingChars": ["文", "具", "次", "丢", "哪", "新", "每", "平", "她", "些", "仔", "找", "所", "钟", "元", "洗", "共", "已", "经"]
+        }
+      ]
+    }
+  ]
+}
