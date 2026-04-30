@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { BookOpen, ChevronRight, ChevronDown } from 'lucide-react'
+import { BookOpen, ChevronRight, ChevronDown, FileText, Play, Pause, Volume2 } from 'lucide-react'
 import { Header } from '../components/Header'
 import { CharacterCardMini } from '../components/CharacterCard'
 
@@ -71,19 +71,147 @@ const mockLessons: Record<string, Array<{
   ]
 }
 
+interface LessonContentData {
+  id: string
+  title: string
+  subtitle: string
+  content: string[]
+  type: string
+}
+
+type PlaySpeed = 0.8 | 1 | 1.2
+
 export const LessonList: React.FC = () => {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const [expandedLesson, setExpandedLesson] = useState<string | null>(null)
+  const [lessonContents, setLessonContents] = useState<Record<string, LessonContentData>>({})
+
+  // 播放状态
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [currentLessonIndex, setCurrentLessonIndex] = useState(-1)
+  const [currentSentenceIndex, setCurrentSentenceIndex] = useState(-1)
+  const [speed, setSpeed] = useState<PlaySpeed>(1)
+  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null)
 
   const lessons = mockLessons[id || ''] || []
+
+  // 加载课文内容数据
+  useEffect(() => {
+    const loadContents = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.BASE_URL}data/lesson-contents.json`)
+        if (!response.ok) return
+        const data = await response.json()
+        setLessonContents(data[id || ''] || {})
+      } catch (error) {
+        console.error('Failed to load lesson contents:', error)
+      }
+    }
+    loadContents()
+  }, [id])
+
+  // 清理语音合成
+  useEffect(() => {
+    return () => {
+      if (window.speechSynthesis) {
+        window.speechSynthesis.cancel()
+      }
+    }
+  }, [])
 
   const toggleLesson = (lessonId: string) => {
     setExpandedLesson(expandedLesson === lessonId ? null : lessonId)
   }
 
+  // 播放指定课文的指定句子
+  const playSentence = (lessonIdx: number, sentenceIdx: number) => {
+    const lesson = lessons[lessonIdx]
+    if (!lesson) return
+
+    const content = lessonContents[lesson.id]
+    if (!content || !content.content[sentenceIdx]) {
+      // 当前课文播完了，尝试下一课
+      if (lessonIdx < lessons.length - 1) {
+        playSentence(lessonIdx + 1, 0)
+      } else {
+        // 所有课文播完
+        setIsPlaying(false)
+        setCurrentLessonIndex(-1)
+        setCurrentSentenceIndex(-1)
+      }
+      return
+    }
+
+    const text = content.content[sentenceIdx]
+    if (!text || text.trim() === '') {
+      // 跳过空行
+      playSentence(lessonIdx, sentenceIdx + 1)
+      return
+    }
+
+    const utterance = new SpeechSynthesisUtterance(text)
+    utterance.lang = 'zh-CN'
+    utterance.rate = speed
+    utterance.pitch = 1
+
+    utterance.onstart = () => {
+      setCurrentLessonIndex(lessonIdx)
+      setCurrentSentenceIndex(sentenceIdx)
+    }
+
+    utterance.onend = () => {
+      // 继续播放下一句
+      playSentence(lessonIdx, sentenceIdx + 1)
+    }
+
+    utterance.onerror = () => {
+      setIsPlaying(false)
+    }
+
+    utteranceRef.current = utterance
+    window.speechSynthesis.speak(utterance)
+  }
+
+  // 开始/停止播放
+  const togglePlay = (startLessonIndex: number = 0) => {
+    if (isPlaying) {
+      window.speechSynthesis?.cancel()
+      setIsPlaying(false)
+      setCurrentLessonIndex(-1)
+      setCurrentSentenceIndex(-1)
+    } else {
+      setIsPlaying(true)
+      // 如果从当前播放位置继续
+      const lessonIdx = currentLessonIndex >= 0 ? currentLessonIndex : startLessonIndex
+      const sentenceIdx = currentSentenceIndex >= 0 ? currentSentenceIndex : 0
+      playSentence(lessonIdx, sentenceIdx)
+    }
+  }
+
+  // 切换语速
+  const toggleSpeed = () => {
+    const speeds: PlaySpeed[] = [0.8, 1, 1.2]
+    const currentIdx = speeds.indexOf(speed)
+    const nextIdx = (currentIdx + 1) % speeds.length
+    setSpeed(speeds[nextIdx])
+  }
+
+  // 计算总进度
+  const getProgress = () => {
+    if (currentLessonIndex < 0) return 0
+    const totalLessons = lessons.length
+    return Math.round(((currentLessonIndex + 1) / totalLessons) * 100)
+  }
+
+  // 获取当前播放的课文标题
+  const getCurrentLessonTitle = () => {
+    if (currentLessonIndex < 0 || currentLessonIndex >= lessons.length) return ''
+    return lessons[currentLessonIndex]?.subtitle || ''
+  }
+
   return (
-    <div className="min-h-screen bg-paper">
+    <div className="min-h-screen bg-paper pb-24">
       <Header
         title="课文列表"
         rightElement={
@@ -110,35 +238,76 @@ export const LessonList: React.FC = () => {
 
       {/* 课文列表 */}
       <div className="px-4 space-y-3">
-        {lessons.map((lesson) => {
+        {lessons.map((lesson, index) => {
           const isExpanded = expandedLesson === lesson.id
+          const isCurrentPlaying = isPlaying && currentLessonIndex === index
 
           return (
             <div
               key={lesson.id}
-              className="bg-white rounded-2xl overflow-hidden"
+              className={`bg-white rounded-2xl overflow-hidden ${isCurrentPlaying ? 'ring-2 ring-primary' : ''}`}
             >
               {/* 课文标题 */}
-              <div
-                onClick={() => lesson.chars.length > 0 && toggleLesson(lesson.id)}
-                className="p-4 flex items-center justify-between cursor-pointer"
-              >
-                <div>
+              <div className="p-4 flex items-center justify-between">
+                {/* 播放按钮 */}
+                <button
+                  onClick={() => {
+                    if (isCurrentPlaying) {
+                      togglePlay()
+                    } else {
+                      // 从这篇课文开始播放
+                      window.speechSynthesis?.cancel()
+                      setCurrentLessonIndex(index)
+                      setCurrentSentenceIndex(0)
+                      togglePlay(index)
+                    }
+                  }}
+                  className={`
+                    w-10 h-10 rounded-full flex items-center justify-center mr-3 flex-shrink-0
+                    transition-all active:scale-95
+                    ${isCurrentPlaying
+                      ? 'bg-primary text-white'
+                      : 'bg-orange-50 text-primary hover:bg-orange-100'
+                    }
+                  `}
+                >
+                  {isCurrentPlaying ? (
+                    <Pause className="w-5 h-5" />
+                  ) : (
+                    <Play className="w-5 h-5 ml-0.5" />
+                  )}
+                </button>
+
+                <div className="flex-1 cursor-pointer" onClick={() => lesson.chars.length > 0 && toggleLesson(lesson.id)}>
                   <h3 className="font-medium text-ink">{lesson.title}</h3>
                   {lesson.subtitle && (
                     <p className="text-sm text-gray-400 mt-0.5">{lesson.subtitle}</p>
                   )}
                 </div>
                 <div className="flex items-center gap-2">
+                  {/* 查看原文按钮 */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      navigate(`/lesson/${id}/${lesson.id}`)
+                    }}
+                    className="flex items-center gap-1 px-3 py-1.5 bg-orange-50 text-primary rounded-full text-sm hover:bg-orange-100 transition-colors"
+                  >
+                    <FileText className="w-4 h-4" />
+                    <span>原文</span>
+                  </button>
+
                   {lesson.chars.length > 0 && (
                     <span className="text-sm text-gray-400">{lesson.chars.length}字</span>
                   )}
                   {lesson.chars.length > 0 && (
-                    isExpanded ? (
-                      <ChevronDown className="w-5 h-5 text-gray-400" />
-                    ) : (
-                      <ChevronRight className="w-5 h-5 text-gray-400" />
-                    )
+                    <div onClick={() => toggleLesson(lesson.id)} className="cursor-pointer">
+                      {isExpanded ? (
+                        <ChevronDown className="w-5 h-5 text-gray-400" />
+                      ) : (
+                        <ChevronRight className="w-5 h-5 text-gray-400" />
+                      )}
+                    </div>
                   )}
                 </div>
               </div>
@@ -163,6 +332,65 @@ export const LessonList: React.FC = () => {
           )
         })}
       </div>
+
+      {/* 底部播放控制栏 */}
+      {isPlaying && (
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-4 py-3 safe-bottom z-50">
+          {/* 当前播放信息 */}
+          <div className="text-center mb-2">
+            <span className="text-sm text-gray-600">
+              正在播放：{getCurrentLessonTitle()}
+            </span>
+          </div>
+
+          {/* 进度条 */}
+          <div className="mb-3">
+            <div className="h-1 bg-gray-100 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-primary transition-all duration-300"
+                style={{ width: `${getProgress()}%` }}
+              />
+            </div>
+            <div className="flex justify-between text-xs text-gray-400 mt-1">
+              <span>{currentLessonIndex + 1} / {lessons.length} 课</span>
+              <span>{getProgress()}%</span>
+            </div>
+          </div>
+
+          {/* 控制按钮 */}
+          <div className="flex items-center justify-center gap-4">
+            {/* 语速切换 */}
+            <button
+              onClick={toggleSpeed}
+              className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-gray-100 text-sm text-gray-600 hover:bg-gray-200 transition-colors"
+            >
+              <Volume2 className="w-4 h-4" />
+              <span>{speed}x</span>
+            </button>
+
+            {/* 暂停/继续按钮 */}
+            <button
+              onClick={() => togglePlay()}
+              className="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center shadow-lg shadow-orange-200"
+            >
+              <Pause className="w-6 h-6" />
+            </button>
+
+            {/* 停止按钮 */}
+            <button
+              onClick={() => {
+                window.speechSynthesis?.cancel()
+                setIsPlaying(false)
+                setCurrentLessonIndex(-1)
+                setCurrentSentenceIndex(-1)
+              }}
+              className="px-3 py-1.5 text-sm text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              停止
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

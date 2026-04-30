@@ -4,6 +4,7 @@ import { Search } from './pages/Search'
 import { CharacterDetail } from './pages/CharacterDetail'
 import { TextbookList } from './pages/TextbookList'
 import { LessonList } from './pages/LessonList'
+import { LessonDetail } from './pages/LessonDetail'
 import { CharacterList } from './pages/CharacterList'
 import { Favorites } from './pages/Favorites'
 
@@ -16,6 +17,7 @@ function App() {
         <Route path="/character/:char" element={<CharacterDetail />} />
         <Route path="/textbooks" element={<TextbookList />} />
         <Route path="/textbook/:id" element={<LessonList />} />
+        <Route path="/lesson/:textbookId/:lessonId" element={<LessonDetail />} />
         <Route path="/lesson/:id" element={<CharacterList />} />
         <Route path="/favorites" element={<Favorites />} />
       </Routes>
