@@ -17,7 +17,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 // PWA 注册
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch((err) => {
+    navigator.serviceWorker.register('./sw.js').catch((err) => {
       console.log('Service Worker registration failed:', err)
     })
   })

@@ -19,7 +19,7 @@ async function loadStrokeData(): Promise<Record<string, string[]>> {
 
   strokeDataLoading = (async () => {
     try {
-      const response = await fetch('/data/character-strokes.json')
+      const response = await fetch(`${import.meta.env.BASE_URL}data/character-strokes.json`)
       if (response.ok) {
         strokeData = await response.json()
         console.log('笔画数据加载成功，字符数:', Object.keys(strokeData!).length)
