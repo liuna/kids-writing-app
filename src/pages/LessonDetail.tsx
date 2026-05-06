@@ -13,6 +13,22 @@ interface LessonContent {
 
 type PlaySpeed = 0.8 | 1 | 1.2
 
+// 清理文本，移除或转换不适合朗读的字符
+const cleanTextForSpeech = (text: string): string => {
+  return text
+    // 移除各类引号
+    .replace(/[''′´`]/g, '')           // 移除单引号变体
+    .replace(/[""″‟«»]/g, '')          // 移除双引号变体
+    .replace(/[「」『』【】]/g, '')     // 移除中文引号
+    // 处理其他标点符号
+    .replace(/、/g, '，')              // 顿号转逗号
+    .replace(/——/g, '，')              // 长横转逗号
+    .replace(/～/g, '，')              // 波浪号转逗号
+    .replace(/\(|\)/g, '')             // 移除英文括号
+    .replace(/（|）/g, '')             // 移除中文括号
+    .trim()
+}
+
 export const LessonDetail: React.FC = () => {
   const { textbookId, lessonId } = useParams<{ textbookId: string; lessonId: string }>()
   const navigate = useNavigate()
@@ -64,7 +80,7 @@ export const LessonDetail: React.FC = () => {
   const playSentence = (index: number, autoContinue: boolean = true) => {
     if (!lesson || !window.speechSynthesis) return
 
-    const text = lesson.content[index]
+    let text = lesson.content[index]
     if (!text || text.trim() === '') {
       // 跳过空行，播放下一句
       if (autoContinue && index < lesson.content.length - 1) {
@@ -75,6 +91,9 @@ export const LessonDetail: React.FC = () => {
       }
       return
     }
+
+    // 清理文本中不适合朗读的字符
+    text = cleanTextForSpeech(text)
 
     const utterance = new SpeechSynthesisUtterance(text)
     utterance.lang = 'zh-CN'
