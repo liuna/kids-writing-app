@@ -170,8 +170,8 @@ export const LessonDetail: React.FC = () => {
       setIsPlaying(false)
     } else {
       setIsPlaying(true)
-      // 如果没有开始播放过，从标题开始
-      const startIndex = currentIndex >= 0 ? currentIndex : (currentIndex === -1 ? 0 : -1)
+      // 如果没有开始播放过，从标题开始（index = -1）
+      const startIndex = currentIndex >= -1 ? currentIndex : -1
       playSentence(startIndex)
     }
   }
@@ -187,8 +187,8 @@ export const LessonDetail: React.FC = () => {
   // 切换语速
   const toggleSpeed = () => {
     const speeds: PlaySpeed[] = [0.8, 1, 1.2]
-    const currentIndex = speeds.indexOf(speed)
-    const nextIndex = (currentIndex + 1) % speeds.length
+    const speedIndex = speeds.indexOf(speed)
+    const nextIndex = (speedIndex + 1) % speeds.length
     const newSpeed = speeds[nextIndex]
     setSpeed(newSpeed)
 
@@ -196,7 +196,7 @@ export const LessonDetail: React.FC = () => {
     if (isPlaying && utteranceRef.current) {
       window.speechSynthesis.cancel()
       setTimeout(() => {
-        const startIndex = currentIndex >= 0 ? currentIndex : -1
+        const startIndex = currentIndex >= -1 ? currentIndex : -1
         playSentence(startIndex)
       }, 100)
     }
