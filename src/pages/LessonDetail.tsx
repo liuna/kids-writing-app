@@ -76,18 +76,40 @@ export const LessonDetail: React.FC = () => {
     }
   }, [])
 
-  // 播放当前句子
+  // 播放当前句子（包括标题）
   const playSentence = (index: number, autoContinue: boolean = true) => {
     if (!lesson || !window.speechSynthesis) return
 
-    let text = lesson.content[index]
+    // 获取要朗读的文本
+    let text: string
+    let displayIndex: number
+
+    // index = -1 时播放标题
+    if (index === -1) {
+      text = lesson.subtitle
+      displayIndex = -1
+    } else {
+      text = lesson.content[index]
+      displayIndex = index
+    }
+
     if (!text || text.trim() === '') {
       // 跳过空行，播放下一句
-      if (autoContinue && index < lesson.content.length - 1) {
-        playSentence(index + 1, autoContinue)
+      if (autoContinue) {
+        if (displayIndex === -1) {
+          // 标题播放完，播放第一句内容
+          playSentence(0, autoContinue)
+        } else if (displayIndex < lesson.content.length - 1) {
+          // 继续播放下一句内容
+          playSentence(displayIndex + 1, autoContinue)
+        } else {
+          // 全部播放完
+          setIsPlaying(false)
+          setCurrentIndex(-1)
+        }
       } else {
         setIsPlaying(false)
-        setCurrentIndex(-1)
+        setCurrentIndex(displayIndex)
       }
       return
     }
@@ -101,22 +123,33 @@ export const LessonDetail: React.FC = () => {
     utterance.pitch = 1
 
     utterance.onstart = () => {
-      setCurrentIndex(index)
-      // 自动滚动到当前句子
-      const element = document.getElementById(`sentence-${index}`)
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      setCurrentIndex(displayIndex)
+      // 自动滚动到当前句子（仅对内容句子）
+      if (displayIndex >= 0) {
+        const element = document.getElementById(`sentence-${displayIndex}`)
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        }
       }
     }
 
     utterance.onend = () => {
       // 自动继续播放下一句
-      if (autoContinue && index < lesson.content.length - 1) {
-        playSentence(index + 1, autoContinue)
+      if (autoContinue) {
+        if (displayIndex === -1) {
+          // 标题播放完，播放第一句内容
+          playSentence(0, autoContinue)
+        } else if (displayIndex < lesson.content.length - 1) {
+          // 继续播放下一句内容
+          playSentence(displayIndex + 1, autoContinue)
+        } else {
+          // 全部播放完
+          setIsPlaying(false)
+          setCurrentIndex(-1)
+          setProgress(100)
+        }
       } else {
         setIsPlaying(false)
-        setCurrentIndex(-1)
-        setProgress(100)
       }
     }
 
@@ -137,7 +170,8 @@ export const LessonDetail: React.FC = () => {
       setIsPlaying(false)
     } else {
       setIsPlaying(true)
-      const startIndex = currentIndex >= 0 ? currentIndex : 0
+      // 如果没有开始播放过，从标题开始
+      const startIndex = currentIndex >= 0 ? currentIndex : (currentIndex === -1 ? 0 : -1)
       playSentence(startIndex)
     }
   }
@@ -162,15 +196,24 @@ export const LessonDetail: React.FC = () => {
     if (isPlaying && utteranceRef.current) {
       window.speechSynthesis.cancel()
       setTimeout(() => {
-        playSentence(currentIndex >= 0 ? currentIndex : 0)
+        const startIndex = currentIndex >= 0 ? currentIndex : -1
+        playSentence(startIndex)
       }, 100)
     }
   }
 
   // 更新进度
   useEffect(() => {
-    if (lesson && currentIndex >= 0) {
-      setProgress(((currentIndex + 1) / lesson.content.length) * 100)
+    if (lesson) {
+      // 总句数 = 标题 + 内容句数
+      const totalSentences = lesson.content.length + 1
+      if (currentIndex === -1) {
+        // 正在播放标题
+        setProgress((1 / totalSentences) * 100)
+      } else if (currentIndex >= 0) {
+        // 正在播放内容
+        setProgress(((currentIndex + 2) / totalSentences) * 100)
+      }
     }
   }, [currentIndex, lesson])
 
@@ -203,6 +246,8 @@ export const LessonDetail: React.FC = () => {
       </div>
     )
   }
+
+  const totalSentences = lesson.content.length + 1
 
   return (
     <div className="min-h-screen bg-paper pb-24">
@@ -272,7 +317,9 @@ export const LessonDetail: React.FC = () => {
             />
           </div>
           <div className="flex justify-between text-xs text-gray-400 mt-1">
-            <span>{currentIndex >= 0 ? currentIndex + 1 : 0} / {lesson.content.length}</span>
+            <span>
+              {currentIndex === -1 ? '标题' : currentIndex >= 0 ? currentIndex + 1 : 0} / {totalSentences}
+            </span>
             <span>{Math.round(progress)}%</span>
           </div>
         </div>
