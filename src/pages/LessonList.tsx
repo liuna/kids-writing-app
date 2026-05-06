@@ -4,6 +4,22 @@ import { BookOpen, ChevronRight, ChevronDown, FileText, Play, Pause, Volume2 } f
 import { Header } from '../components/Header'
 import { CharacterCardMini } from '../components/CharacterCard'
 
+// 清理文本，移除或转换不适合朗读的字符
+const cleanTextForSpeech = (text: string): string => {
+  return text
+    // 移除各类引号
+    .replace(/[''′´`]/g, '')           // 移除单引号变体
+    .replace(/[""″‟«»]/g, '')          // 移除双引号变体
+    .replace(/[「」『』【】]/g, '')     // 移除中文引号
+    // 处理其他标点符号
+    .replace(/、/g, '，')              // 顿号转逗号
+    .replace(/——/g, '，')              // 长横转逗号
+    .replace(/～/g, '，')              // 波浪号转逗号
+    .replace(/\(|\)/g, '')             // 移除英文括号
+    .replace(/（|）/g, '')             // 移除中文括号
+    .trim()
+}
+
 // 部编版一年级上册完整课文数据
 const mockLessons: Record<string, Array<{
   id: string
@@ -130,10 +146,10 @@ export const LessonList: React.FC = () => {
     if (!lesson) return
 
     const content = lessonContents[lesson.id]
-    if (!content || !content.content[sentenceIdx]) {
-      // 当前课文播完了，尝试下一课
+    if (!content) {
+      // 当前课文没有内容，尝试下一课
       if (lessonIdx < lessons.length - 1) {
-        playSentence(lessonIdx + 1, 0)
+        playSentence(lessonIdx + 1, -1)  // -1 表示先播标题
       } else {
         // 所有课文播完
         setIsPlaying(false)
@@ -143,12 +159,41 @@ export const LessonList: React.FC = () => {
       return
     }
 
-    const text = content.content[sentenceIdx]
+    let text: string
+
+    // sentenceIdx = -1 时播放标题
+    if (sentenceIdx === -1) {
+      text = content.subtitle
+    } else {
+      if (!content.content[sentenceIdx]) {
+        // 当前课文播完了，尝试下一课
+        if (lessonIdx < lessons.length - 1) {
+          playSentence(lessonIdx + 1, -1)  // 下一课先播标题
+        } else {
+          // 所有课文播完
+          setIsPlaying(false)
+          setCurrentLessonIndex(-1)
+          setCurrentSentenceIndex(-1)
+        }
+        return
+      }
+      text = content.content[sentenceIdx]
+    }
+
     if (!text || text.trim() === '') {
       // 跳过空行
-      playSentence(lessonIdx, sentenceIdx + 1)
+      if (sentenceIdx === -1) {
+        // 标题为空，直接播第一句
+        playSentence(lessonIdx, 0)
+      } else {
+        // 内容为空，播下一句
+        playSentence(lessonIdx, sentenceIdx + 1)
+      }
       return
     }
+
+    // 清理文本中不适合朗读的字符
+    text = cleanTextForSpeech(text)
 
     const utterance = new SpeechSynthesisUtterance(text)
     utterance.lang = 'zh-CN'
@@ -162,7 +207,13 @@ export const LessonList: React.FC = () => {
 
     utterance.onend = () => {
       // 继续播放下一句
-      playSentence(lessonIdx, sentenceIdx + 1)
+      if (sentenceIdx === -1) {
+        // 标题播完，播第一句内容
+        playSentence(lessonIdx, 0)
+      } else {
+        // 内容播完，播下一句
+        playSentence(lessonIdx, sentenceIdx + 1)
+      }
     }
 
     utterance.onerror = () => {
@@ -184,7 +235,7 @@ export const LessonList: React.FC = () => {
       setIsPlaying(true)
       // 如果从当前播放位置继续
       const lessonIdx = currentLessonIndex >= 0 ? currentLessonIndex : startLessonIndex
-      const sentenceIdx = currentSentenceIndex >= 0 ? currentSentenceIndex : 0
+      const sentenceIdx = currentSentenceIndex >= 0 ? currentSentenceIndex : -1  // -1 表示先播标题
       playSentence(lessonIdx, sentenceIdx)
     }
   }
@@ -258,7 +309,7 @@ export const LessonList: React.FC = () => {
                       // 从这篇课文开始播放
                       window.speechSynthesis?.cancel()
                       setCurrentLessonIndex(index)
-                      setCurrentSentenceIndex(0)
+                      setCurrentSentenceIndex(-1)  // -1 表示先播标题
                       togglePlay(index)
                     }
                   }}
